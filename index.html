@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebR with dplyr and ggplot2 Example</title>
+    <script
+      src="https://webr.r-wasm.org/latest/webr.mjs"
+      type="module"
+    ></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>WebR with dplyr and ggplot2 Demo</h1>
+
+      <div class="description">
+        <p>
+          This is a simple demonstration of using dplyr and ggplot2 in WebR to
+          create a visualization.
+        </p>
+        <p>
+          The example below analyzes the built-in mtcars dataset, grouping cars
+          by cylinder count and calculating average MPG.
+        </p>
+      </div>
+
+      <div class="loading" id="loading">
+        <p>Loading WebR and packages... <span id="progress">0%</span></p>
+        <div class="progress-bar">
+          <div class="progress" id="progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="content" id="content" style="display: none">
+        <div class="code-container">
+          <h2>R Code:</h2>
+          <pre id="code-display">
+library(dplyr)
+library(ggplot2)
+
+# Analyze mtcars dataset
+mtcars %>%
+  mutate(cyl = as.factor(cyl)) %>%
+  group_by(cyl) %>%
+  summarise(
+    mean_mpg = mean(mpg),
+    count = n()
+  ) %>%
+  ggplot(aes(x = cyl, y = mean_mpg, fill = cyl)) +
+  geom_col() +
+  geom_text(aes(label = round(mean_mpg, 1)), vjust = -0.5) +
+  labs(
+    title = "Average MPG by Number of Cylinders",
+    x = "Cylinders",
+    y = "Mean MPG"
+  ) +
+  theme_minimal()</pre
+          >
+          <button id="run-button">Run Analysis</button>
+        </div>
+
+        <div class="output-container">
+          <h2>Output:</h2>
+          <div id="plot-output" class="plot-output"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js" type="module"></script>
+  </body>
+</html>

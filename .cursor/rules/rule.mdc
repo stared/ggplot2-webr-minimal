@@ -1,0 +1,6 @@
+---
+description: WebR dcumentation
+globs: 
+alwaysApply: false
+---
+See @https://docs.r-wasm.org/webr/latest/plotting.html 
