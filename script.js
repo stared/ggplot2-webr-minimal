@@ -9,6 +9,49 @@ const runButton = document.getElementById('run-button');
 const plotOutput = document.getElementById('plot-output');
 const codeDisplay = document.getElementById('code-display');
 
+// Create editable code area if it doesn't exist yet
+function setupCodeEditor() {
+  // If we're still using a static element, replace it with an editable textarea
+  if (codeDisplay && !(codeDisplay instanceof HTMLTextAreaElement)) {
+    const parentElement = codeDisplay.parentElement;
+    
+    // Create a new textarea element
+    const codeEditor = document.createElement('textarea');
+    codeEditor.id = 'code-display';
+    codeEditor.className = 'code-editor';
+    codeEditor.rows = 12;
+    codeEditor.style.width = '100%';
+    codeEditor.style.fontFamily = 'monospace';
+    codeEditor.style.padding = '10px';
+    
+    // Copy the content from the original element
+    codeEditor.value = codeDisplay.textContent || `library(dplyr)
+library(ggplot2)
+library(ggthemes)
+
+# Analyze mtcars dataset
+mtcars %>%
+  mutate(cyl = as.factor(cyl)) %>%
+  group_by(cyl) %>%
+  summarise(
+    mean_mpg = mean(mpg),
+    count = n()
+  ) %>%
+  ggplot(aes(x = cyl, y = mean_mpg, fill = cyl)) +
+  geom_col() +
+  geom_text(aes(label = round(mean_mpg, 1)), vjust = -0.5) +
+  labs(
+    title = "Average MPG by Number of Cylinders",
+    x = "Cylinders",
+    y = "Mean MPG"
+  ) +
+  theme_economist()`;
+    
+    // Replace the original element with the textarea
+    parentElement.replaceChild(codeEditor, codeDisplay);
+  }
+}
+
 // Create a simple WebR instance
 const webR = new WebR();
 
@@ -17,18 +60,26 @@ async function initializeWebR() {
   try {
     // Initialize WebR
     await webR.init();
-    progressElement.innerText = '33%';
-    progressBarElement.style.width = '33%';
+    progressElement.innerText = '25%';
+    progressBarElement.style.width = '25%';
     
     // Install dplyr package
     await webR.installPackages(['dplyr']);
-    progressElement.innerText = '66%';
-    progressBarElement.style.width = '66%';
+    progressElement.innerText = '50%';
+    progressBarElement.style.width = '50%';
     
     // Install ggplot2 package
     await webR.installPackages(['ggplot2']);
+    progressElement.innerText = '75%';
+    progressBarElement.style.width = '75%';
+    
+    // Install ggthemes package
+    await webR.installPackages(['ggthemes']);
     progressElement.innerText = '100%';
     progressBarElement.style.width = '100%';
+    
+    // Set up the editable code area
+    setupCodeEditor();
     
     // All done, show the content
     loadingElement.style.display = 'none';
@@ -48,8 +99,13 @@ async function runCode() {
     // Show loading message
     plotOutput.innerHTML = '<p>Running analysis...</p>';
     
-    // Get the R code from the display
-    const rCode = codeDisplay.textContent;
+    // Get the updated code display element
+    const updatedCodeDisplay = document.getElementById('code-display');
+    
+    // Get the R code from the textarea
+    const rCode = updatedCodeDisplay instanceof HTMLTextAreaElement 
+      ? updatedCodeDisplay.value 
+      : updatedCodeDisplay.textContent;
     
     console.log("Executing R code:", rCode);
     
@@ -60,6 +116,7 @@ async function runCode() {
     const capture = await shelter.captureR(`
       library(dplyr)
       library(ggplot2)
+      library(ggthemes)
       
       # Run the user's code
       ${rCode}
