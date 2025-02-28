@@ -2,6 +2,8 @@
 
 This is a simple demonstration of using [WebR](https://docs.r-wasm.org/webr/latest/) with dplyr and ggplot2 to create data visualizations directly in the browser without requiring an R server.
 
+Generate by Claude 3.7 Sonnet in [Cursor IDE](https://www.cursor.com/) - took a few iterations.
+
 ## About WebR
 
 WebR is a version of R compiled to WebAssembly, which allows R code to be executed directly in the browser. This makes it possible to run R code without needing a server-side R installation.
